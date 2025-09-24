@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Message</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #000;
+            color: #33ff66;
+            font-family: 'Courier New', 'Courier Prime', monospace;
+            font-size: 18px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        /* CRT 모니터 효과 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 0 0 10px #33ff66;
+            letter-spacing: 3px;
+        }
+        
+        .message-line {
+            margin-bottom: 20px;
+            opacity: 0;
+            white-space: pre-wrap;
+        }
+        
+        .intro {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #66ff99;
+            text-shadow: 0 0 5px #66ff99;
+        }
+        
+        .main-message {
+            font-size: 16px;
+            line-height: 1.8;
+        }
+        
+        .final-message {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 40px;
+            color: #ff6666;
+            text-shadow: 0 0 15px #ff6666;
+            letter-spacing: 2px;
+        }
+        
+        .cursor {
+            display: inline-block;
+            background-color: #33ff66;
+            margin-left: 2px;
+            width: 2px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* 스캔라인 효과 */
+        .scanline {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #33ff66, transparent);
+            animation: scan 3s linear infinite;
+            opacity: 0.7;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        /* 글리치 효과 */
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            animation: glitch-1 0.5s infinite;
+            color: #ff0000;
+            z-index: -1;
+        }
+        
+        .glitch::after {
+            animation: glitch-2 0.5s infinite;
+            color: #0000ff;
+            z-index: -2;
+        }
+        
+        @keyframes glitch-1 {
+            0%, 14%, 15%, 49%, 50%, 99%, 100% { transform: translate(0); }
+            15%, 49% { transform: translate(-2px, -1px); }
+        }
+        
+        @keyframes glitch-2 {
+            0%, 20%, 21%, 62%, 63%, 99%, 100% { transform: translate(0); }
+            21%, 62% { transform: translate(2px, 1px); }
+        }
+        
+        /* 반응형 */
+        @media (max-width: 600px) {
+            body { font-size: 14px; }
+            .title { font-size: 24px; }
+            .intro { font-size: 16px; }
+            .main-message { font-size: 14px; }
+            .final-message { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    
+    <div class="container">
+        <div class="title glitch" data-text="Hidden Message">Hidden Message</div>
+        
+        <div class="message-line intro" id="intro">To the Mystery Club...</div>
+        
+        <div class="message-line main-message" id="line1">추리반에게...</div>
+        <div class="message-line main-message" id="line2">여기까지 온 걸 보니, 너희도 눈치챘겠지.</div>
+        <div class="message-line main-message" id="line3">이건 단순한 흔적놀이가 아니야.</div>
+        <div class="message-line main-message" id="line4">학교에는 'Hidden Club',</div>
+        <div class="message-line main-message" id="line5">즉 아무에게도 들키지 않은 숨겨진 동아리가 있어.</div>
+        <div class="message-line main-message" id="line6">나는 그 비밀을 지켜내려 했지만, 끝내 감출 수밖에 없었어.</div>
+        <div class="message-line main-message" id="line7">아직 밝혀지지 않은 이야기들이 그 안에 남아 있지.</div>
+        <div class="message-line main-message" id="line8">그래서 부탁한다.</div>
+        <div class="message-line main-message" id="line9">이제부터는 너희가 그 비밀을 이어가 줘.</div>
+        <div class="message-line main-message" id="line10">숨겨진 동아리의 흔적을 따라가다 보면,</div>
+        <div class="message-line main-message" id="line11">언젠가 진실에 다다를 수 있을 거야.</div>
+        <div class="message-line main-message" id="line12">- 전학생</div>
+        
+        <div class="message-line final-message glitch" id="final" data-text="YOU ARE NOW PART OF IT.">YOU ARE NOW PART OF IT.</div>
+    </div>
+
+    <script>
+        // 타이핑 효과 함수
+        function typeWriter(element, text, speed = 50) {
+            return new Promise((resolve) => {
+                element.style.opacity = 1;
+                element.innerHTML = '';
+                let i = 0;
+                
+                // HTML 태그를 처리하기 위한 임시 div
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = text;
+                const plainText = tempDiv.textContent || tempDiv.innerText;
+                
+                function type() {
+                    if (i < plainText.length) {
+                        // 현재까지의 텍스트
+                        const currentText = plainText.substring(0, i + 1);
+                        
+                        // Hidden Club 부분을 찾아서 strong 태그로 감싸기
+                        if (text.includes('<strong>Hidden Club</strong>')) {
+                            element.innerHTML = currentText.replace('Hidden Club', '<strong>Hidden Club</strong>');
+                        } else {
+                            element.innerHTML = currentText;
+                        }
+                        
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        // 최종적으로 올바른 HTML 적용
+                        element.innerHTML = text;
+                        setTimeout(() => {
+                            resolve();
+                        }, 200);
+                    }
+                }
+                
+                type();
+            });
+        }
+        
+        // 순차적으로 메시지 출력
+        async function showMessages() {
+            const messages = [
+                { id: 'intro', speed: 80 },
+                { id: 'line1', speed: 60 },
+                { id: 'line2', speed: 50 },
+                { id: 'line3', speed: 50 },
+                { id: 'line4', speed: 50 },
+                { id: 'line5', speed: 50 },
+                { id: 'line6', speed: 50 },
+                { id: 'line7', speed: 50 },
+                { id: 'line8', speed: 50 },
+                { id: 'line9', speed: 50 },
+                { id: 'line10', speed: 50 },
+                { id: 'line11', speed: 50 },
+                { id: 'line12', speed: 60 }
+            ];
+            
+            // 2초 대기 후 시작
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            for (const msg of messages) {
+                const element = document.getElementById(msg.id);
+                let text = element.innerHTML;
+                
+                // HTML 태그를 실제 태그로 변환
+                if (msg.id === 'line4') {
+                    text = "학교에는 '<strong>Hidden Club</strong>',";
+                }
+                
+                await typeWriter(element, text, msg.speed);
+                await new Promise(resolve => setTimeout(resolve, 800)); // 줄 간 대기
+            }
+            
+            // 마지막 메시지는 특별한 효과와 함께
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            const finalElement = document.getElementById('final');
+            finalElement.style.opacity = 1;
+            finalElement.style.animation = 'fadeIn 2s ease-in-out';
+            
+            // 마지막 글리치 효과 강화
+            setTimeout(() => {
+                finalElement.classList.add('glitch');
+            }, 1000);
+        }
+        
+        // 페이지 로드 후 실행
+        window.addEventListener('load', showMessages);
+        
+        // 키보드 이벤트로 스킵 기능
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                // 모든 메시지 즉시 표시
+                const allMessages = document.querySelectorAll('.message-line');
+                allMessages.forEach(msg => {
+                    msg.style.opacity = 1;
+                    msg.style.animation = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
