@@ -159,24 +159,38 @@
             21%, 62% { transform: translate(2px, 1px); }
         }
         
-        /* 반응형 */
-        @media (max-width: 600px) {
-            body { font-size: 14px; }
-            .title { font-size: 24px; }
-            .intro { font-size: 16px; }
-            .main-message { font-size: 14px; }
-            .final-message { font-size: 18px; }
+        .music-notice {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(51, 255, 102, 0.1);
+            border: 1px solid #33ff66;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            opacity: 0.8;
+            animation: fadeInOut 3s ease-in-out;
+            z-index: 1001;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 0.8; }
         }
     </style>
 </head>
 <body>
     <div class="scanline"></div>
     
+    <!-- 음악 안내 메시지 -->
+    <div id="musicNotice" class="music-notice" style="display: none;">
+        🎵 Click anywhere to enable sound
+    </div>
+    
     <!-- 배경음악 플레이어 -->
     <audio id="bgMusic" loop preload="auto" style="display: none;">
-        <!-- 여기에 다운받은 음악 파일명을 넣으세요 -->
-        <source src="your-music-file.mp3" type="audio/mpeg">
-        <source src="your-music-file.ogg" type="audio/ogg">
+        <!-- 파일명을 간단히 test.mp3로 바꿔서 테스트해보세요 -->
+        <source src="test.mp3" type="audio/mpeg">
     </audio>
     
     <div class="container">
@@ -286,26 +300,53 @@
             }, 1000);
         }
         
-        // 배경음악 재생 함수
+        // 배경음악 재생 함수 (디버깅 추가)
         function playBackgroundMusic() {
             const audio = document.getElementById('bgMusic');
             if (audio) {
-                audio.volume = 0.3; // 볼륨 30%로 설정
-                audio.play().catch(e => {
-                    console.log('자동재생이 브라우저에서 차단되었습니다. 사용자 상호작용 후 재생됩니다.');
+                console.log('음악 파일 로드 시도 중...');
+                audio.volume = 0.3;
+                
+                // 음악 로드 확인
+                audio.addEventListener('loadeddata', () => {
+                    console.log('음악 파일 로드 완료!');
                 });
+                
+                audio.addEventListener('error', (e) => {
+                    console.log('음악 파일 로드 실패:', e);
+                    console.log('파일 경로를 확인해주세요: mystery-music.mp3');
+                });
+                
+                // 재생 시도
+                audio.play().then(() => {
+                    console.log('음악 재생 시작!');
+                }).catch(e => {
+                    console.log('자동재생이 차단됨. 사용자 클릭 후 재생됩니다.');
+                    console.log('에러 상세:', e);
+                });
+            } else {
+                console.log('audio 엘리먼트를 찾을 수 없습니다.');
             }
         }
         
-        // 사용자 상호작용 시 음악 재생
+        // 사용자 상호작용 시 음악 재생 (강화된 버전)
         function enableMusicOnInteraction() {
             const audio = document.getElementById('bgMusic');
+            const notice = document.getElementById('musicNotice');
+            
             if (audio && audio.paused) {
-                audio.play().catch(e => console.log('음악 재생 실패:', e));
-                // 한 번 재생되면 이벤트 리스너 제거
-                document.removeEventListener('click', enableMusicOnInteraction);
-                document.removeEventListener('keydown', enableMusicOnInteraction);
-                document.removeEventListener('touchstart', enableMusicOnInteraction);
+                console.log('사용자 상호작용으로 음악 재생 시도...');
+                audio.play().then(() => {
+                    console.log('🎵 음악 재생 성공!');
+                    // 안내 메시지 숨기기
+                    if (notice) notice.style.display = 'none';
+                    // 성공하면 이벤트 리스너 제거
+                    document.removeEventListener('click', enableMusicOnInteraction);
+                    document.removeEventListener('keydown', enableMusicOnInteraction);
+                    document.removeEventListener('touchstart', enableMusicOnInteraction);
+                }).catch(e => {
+                    console.log('음악 재생 실패:', e);
+                });
             }
         }
         
@@ -313,6 +354,15 @@
         window.addEventListener('load', () => {
             // 배경음악 재생 시도
             playBackgroundMusic();
+            
+            // 자동재생이 차단된 경우 안내 메시지 표시
+            setTimeout(() => {
+                const audio = document.getElementById('bgMusic');
+                const notice = document.getElementById('musicNotice');
+                if (audio && audio.paused && notice) {
+                    notice.style.display = 'block';
+                }
+            }, 1000);
             
             // 사용자 상호작용 시 음악 재생 (자동재생이 차단된 경우 대비)
             document.addEventListener('click', enableMusicOnInteraction);
