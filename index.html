@@ -172,6 +172,13 @@
 <body>
     <div class="scanline"></div>
     
+    <!-- 배경음악 플레이어 -->
+    <audio id="bgMusic" loop preload="auto" style="display: none;">
+        <!-- 여기에 다운받은 음악 파일명을 넣으세요 -->
+        <source src="your-music-file.mp3" type="audio/mpeg">
+        <source src="your-music-file.ogg" type="audio/ogg">
+    </audio>
+    
     <div class="container">
         <div class="title glitch" data-text="Hidden Message">Hidden Message</div>
         
@@ -279,8 +286,42 @@
             }, 1000);
         }
         
+        // 배경음악 재생 함수
+        function playBackgroundMusic() {
+            const audio = document.getElementById('bgMusic');
+            if (audio) {
+                audio.volume = 0.3; // 볼륨 30%로 설정
+                audio.play().catch(e => {
+                    console.log('자동재생이 브라우저에서 차단되었습니다. 사용자 상호작용 후 재생됩니다.');
+                });
+            }
+        }
+        
+        // 사용자 상호작용 시 음악 재생
+        function enableMusicOnInteraction() {
+            const audio = document.getElementById('bgMusic');
+            if (audio && audio.paused) {
+                audio.play().catch(e => console.log('음악 재생 실패:', e));
+                // 한 번 재생되면 이벤트 리스너 제거
+                document.removeEventListener('click', enableMusicOnInteraction);
+                document.removeEventListener('keydown', enableMusicOnInteraction);
+                document.removeEventListener('touchstart', enableMusicOnInteraction);
+            }
+        }
+        
         // 페이지 로드 후 실행
-        window.addEventListener('load', showMessages);
+        window.addEventListener('load', () => {
+            // 배경음악 재생 시도
+            playBackgroundMusic();
+            
+            // 사용자 상호작용 시 음악 재생 (자동재생이 차단된 경우 대비)
+            document.addEventListener('click', enableMusicOnInteraction);
+            document.addEventListener('keydown', enableMusicOnInteraction);
+            document.addEventListener('touchstart', enableMusicOnInteraction);
+            
+            // 메시지 표시 시작
+            showMessages();
+        });
         
         // 키보드 이벤트로 스킵 기능
         document.addEventListener('keydown', function(e) {
